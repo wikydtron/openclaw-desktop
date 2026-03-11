@@ -10,12 +10,17 @@ let gatewayManager: GatewayManager;
 const isDev = !app.isPackaged;
 
 function createWindow() {
+  const iconPath = isDev
+    ? path.join(__dirname, '../../assets/icon.ico')
+    : path.join(process.resourcesPath, 'assets/icon.ico');
+
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
     minWidth: 700,
     minHeight: 500,
     backgroundColor: '#18181b',
+    icon: iconPath,
     show: true,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
