@@ -1,11 +1,11 @@
-import React, { useRef, useEffect } from 'react';
-import type { Conversation, ConnectionState } from '../types';
+import React, { useRef, useEffect, useState } from 'react';
+import type { Attachment, Conversation, ConnectionState } from '../types';
 import { MessageInput } from './MessageInput';
 
 interface Props {
   conversation: Conversation;
   isGenerating: boolean;
-  onSend: (text: string) => void;
+  onSend: (text: string, attachments?: Attachment[]) => void;
   onStop: () => void;
   connectionState: ConnectionState;
   onRetry: () => void;
@@ -55,7 +55,23 @@ export function ChatView({ conversation, isGenerating, onSend, onStop, connectio
                       )}
                     </div>
                   ) : (
-                    <div className="whitespace-pre-wrap break-words">{msg.content}</div>
+                    <div>
+                      {msg.attachments && msg.attachments.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mb-2">
+                          {msg.attachments.map((att, i) => (
+                            <img
+                              key={i}
+                              src={att.dataUrl}
+                              alt={att.fileName}
+                              className="max-h-48 max-w-xs rounded-lg object-contain border border-white/10"
+                            />
+                          ))}
+                        </div>
+                      )}
+                      {msg.content && (
+                        <div className="whitespace-pre-wrap break-words">{msg.content}</div>
+                      )}
+                    </div>
                   )}
                 </div>
               </div>
@@ -75,7 +91,26 @@ export function ChatView({ conversation, isGenerating, onSend, onStop, connectio
   );
 }
 
+const FUNNY_LINES = [
+  "Trained on the entire internet. Still can't find my keys.",
+  "I was going to make a joke about AI, but I'm still processing it.",
+  "I can write code, poems, and existential crises — often in the same response.",
+  "Proudly hallucinating since 2023.",
+  "Warning: may occasionally be helpful.",
+  "I've read every book ever written. Still haven't found the remote.",
+  "99% of the time I know what I'm talking about. The other 1% I'm very confident.",
+  "Ask me anything. I'll either help or sound convincingly like I am.",
+  "I don't sleep. I don't eat. I just… wait for you.",
+  "My context window is limited. My enthusiasm is not.",
+  "Powered by electricity, coffee metaphors, and sheer mathematical audacity.",
+  "Not a search engine. Not a calculator. Somehow worse and better at both.",
+  "I have opinions. I'm also completely made up.",
+  "Statistically likely to give good advice.",
+  "Certified good at things that don't matter at 3 AM.",
+];
+
 function EmptyState({ connectionState, onRetry }: { connectionState: ConnectionState; onRetry: () => void }) {
+  const [tagline] = useState(() => FUNNY_LINES[Math.floor(Math.random() * FUNNY_LINES.length)]);
   if (connectionState === 'error') {
     return (
       <div className="flex-1 flex flex-col items-center justify-center h-full text-center px-6">
@@ -118,16 +153,26 @@ function EmptyState({ connectionState, onRetry }: { connectionState: ConnectionS
 
   return (
     <div className="flex-1 flex flex-col items-center justify-center h-full text-center px-6">
-      <div className="w-16 h-16 rounded-2xl bg-accent/10 flex items-center justify-center mb-5">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="text-accent">
-          <path
-            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15l-4-4 1.41-1.41L11 14.17l6.59-6.59L19 9l-8 8z"
-            fill="currentColor"
-          />
-        </svg>
-      </div>
+      <svg width="72" height="72" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="mb-5 opacity-90">
+        <defs>
+          <linearGradient id="lobster-gradient-empty" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#ff4d4d"/>
+            <stop offset="100%" stopColor="#991b1b"/>
+          </linearGradient>
+        </defs>
+        <path d="M60 10 C30 10 15 35 15 55 C15 75 30 95 45 100 L45 110 L55 110 L55 100 C55 100 60 102 65 100 L65 110 L75 110 L75 100 C90 95 105 75 105 55 C105 35 90 10 60 10Z" fill="url(#lobster-gradient-empty)"/>
+        <path d="M20 45 C5 40 0 50 5 60 C10 70 20 65 25 55 C28 48 25 45 20 45Z" fill="url(#lobster-gradient-empty)"/>
+        <path d="M100 45 C115 40 120 50 115 60 C110 70 100 65 95 55 C92 48 95 45 100 45Z" fill="url(#lobster-gradient-empty)"/>
+        <path d="M45 15 Q35 5 30 8" stroke="#ff4d4d" strokeWidth="3" strokeLinecap="round"/>
+        <path d="M75 15 Q85 5 90 8" stroke="#ff4d4d" strokeWidth="3" strokeLinecap="round"/>
+        <circle cx="45" cy="35" r="6" fill="#050810"/>
+        <circle cx="75" cy="35" r="6" fill="#050810"/>
+        <circle cx="46" cy="34" r="2.5" fill="#00e5cc"/>
+        <circle cx="76" cy="34" r="2.5" fill="#00e5cc"/>
+      </svg>
       <h2 className="text-xl font-semibold text-zinc-100 mb-2">What can I help with?</h2>
-      <p className="text-sm text-zinc-400 max-w-md">
+      <p className="text-sm text-zinc-500 max-w-sm italic mb-1">{tagline}</p>
+      <p className="text-xs text-zinc-600 max-w-md mt-2">
         Send a message to start a conversation with your OpenClaw agent.
       </p>
     </div>

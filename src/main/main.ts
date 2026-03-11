@@ -1,5 +1,6 @@
-import { app, BrowserWindow, ipcMain, Tray, Menu, nativeImage, shell, NativeImage } from 'electron';
+import { app, BrowserWindow, ipcMain, Tray, Menu, nativeImage, shell, NativeImage, dialog } from 'electron';
 import path from 'path';
+import fs from 'fs';
 import { GatewayManager } from './gateway';
 import { setStartup, getStartup } from './startup';
 
@@ -138,6 +139,33 @@ function setupIPC() {
 
   ipcMain.handle('shell:openExternal', (_e, url: string) => {
     shell.openExternal(url);
+  });
+
+  ipcMain.handle('dialog:openImage', async () => {
+    if (!mainWindow) return null;
+    const result = await dialog.showOpenDialog(mainWindow, {
+      properties: ['openFile'],
+      filters: [{ name: 'Images', extensions: ['jpg', 'jpeg', 'png', 'gif', 'webp'] }],
+    });
+    if (result.canceled || !result.filePaths.length) return null;
+    const filePath = result.filePaths[0];
+    const data = fs.readFileSync(filePath);
+    const ext = path.extname(filePath).toLowerCase().slice(1);
+    const mimeMap: Record<string, string> = {
+      jpg: 'image/jpeg',
+      jpeg: 'image/jpeg',
+      png: 'image/png',
+      gif: 'image/gif',
+      webp: 'image/webp',
+    };
+    const mimeType = mimeMap[ext] || 'image/png';
+    const base64 = data.toString('base64');
+    return {
+      mimeType,
+      fileName: path.basename(filePath),
+      content: base64,
+      dataUrl: `data:${mimeType};base64,${base64}`,
+    };
   });
 }
 

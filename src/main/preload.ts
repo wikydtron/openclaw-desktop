@@ -21,4 +21,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   shell: {
     openExternal: (url: string) => ipcRenderer.invoke('shell:openExternal', url),
   },
+  dialog: {
+    openImage: () => ipcRenderer.invoke('dialog:openImage'),
+  },
 });
