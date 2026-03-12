@@ -1,5 +1,7 @@
 # OpenClaw Desktop
 
+[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-%E2%98%95-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://paypal.me/theboss3dfactory/)
+
 A desktop client for [OpenClaw](https://openclaw.ai) — chat with your local OpenClaw gateway from a native Windows app instead of using the terminal.
 
 ![OpenClaw Desktop](assets/tray-icon.png)
@@ -77,3 +79,11 @@ src/
 ## License
 
 MIT
+---
+
+## ☕ Support
+
+If this project is useful to you, consider buying me a coffee!
+
+[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-%E2%98%95-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://paypal.me/theboss3dfactory/)
+
