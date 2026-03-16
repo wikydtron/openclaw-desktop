@@ -6,12 +6,20 @@ export type ConnectionState =
   | 'reconnecting'
   | 'error';
 
+export interface Attachment {
+  mimeType: string;
+  fileName: string;
+  content: string; // base64
+  dataUrl: string; // data URL for display
+}
+
 export interface ChatMessage {
   id: string;
   role: 'user' | 'assistant';
   content: string;
   timestamp: number;
   streaming?: boolean;
+  attachments?: Attachment[];
 }
 
 export interface Conversation {
@@ -53,6 +61,9 @@ declare global {
       };
       shell: {
         openExternal: (url: string) => Promise<void>;
+      };
+      dialog: {
+        openImage: () => Promise<Attachment | null>;
       };
     };
   }
