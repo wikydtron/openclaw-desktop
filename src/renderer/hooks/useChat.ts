@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
-import type { ChatMessage, Conversation } from '../types';
+import type { Attachment, ChatMessage, Conversation } from '../types';
 
 let convCounter = 0;
 
@@ -18,8 +18,26 @@ function createConversation(): Conversation {
 function deriveTitle(messages: ChatMessage[]): string {
   const first = messages.find((m) => m.role === 'user');
   if (!first) return 'New Chat';
-  const text = first.content.trim();
-  return text.length > 40 ? text.slice(0, 40) + '...' : text;
+
+  // Strip common filler openers
+  let text = first.content.trim()
+    .replace(/^(can you |please |could you |i want you to |i need you to |help me |i want to |i need to )/i, '');
+
+  // Use first sentence/line only
+  const sentence = text.split(/[.!?\n]/)[0].trim();
+  if (sentence) text = sentence;
+
+  // Capitalize
+  text = text.charAt(0).toUpperCase() + text.slice(1);
+
+  // Trim to word boundary at 42 chars
+  if (text.length > 42) {
+    const cut = text.slice(0, 42);
+    const lastSpace = cut.lastIndexOf(' ');
+    text = (lastSpace > 20 ? cut.slice(0, lastSpace) : cut) + '…';
+  }
+
+  return text || 'New Chat';
 }
 
 interface UseChatOptions {
@@ -110,14 +128,16 @@ export function useChat({ sendRequest, setNodeEventHandler, isConnected, addLog 
   }, [activeId, setNodeEventHandler, addLog]);
 
   const sendMessage = useCallback(
-    async (text: string) => {
-      if (!text.trim() || !isConnected() || isGenerating) return;
+    async (text: string, attachments?: Attachment[]) => {
+      if (!text.trim() && (!attachments || attachments.length === 0)) return;
+      if (!isConnected() || isGenerating) return;
 
       const userMsg: ChatMessage = {
         id: `msg_${Date.now()}_u`,
         role: 'user',
         content: text.trim(),
         timestamp: Date.now(),
+        attachments,
       };
 
       const assistantMsg: ChatMessage = {
@@ -148,6 +168,13 @@ export function useChat({ sendRequest, setNodeEventHandler, isConnected, addLog 
           sessionKey: activeConversation.sessionKey,
           message: text.trim(),
           idempotencyKey,
+          ...(attachments?.length ? {
+            attachments: attachments.map((a) => ({
+              mimeType: a.mimeType,
+              fileName: a.fileName,
+              content: a.content,
+            })),
+          } : {}),
         }, 600000);
 
         addLog('info', `chat.send accepted for session ${activeConversation.sessionKey}`);
@@ -168,6 +195,7 @@ export function useChat({ sendRequest, setNodeEventHandler, isConnected, addLog 
         setIsGenerating(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [activeId, activeConversation, isConnected, isGenerating, sendRequest, updateConversation, addLog]
   );
 
