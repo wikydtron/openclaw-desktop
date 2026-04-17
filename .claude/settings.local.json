@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(where openclaw)",
+      "Bash(where openclaw.cmd)",
+      "Bash(openclaw --version)",
+      "Bash(openclaw gateway --help)",
+      "Bash(openclaw gateway status)",
+      "Bash(openclaw gateway start)",
+      "Bash(openclaw gateway health)",
+      "Bash(npx tsc -p tsconfig.main.json --noEmit)",
+      "Bash(openclaw gateway call health)",
+      "Bash(openclaw gateway call --help)",
+      "Bash(openclaw gateway call --json chat.send --params '{\"\"sessionKey\"\":\"\"test\"\",\"\"message\"\":\"\"hello\"\"}' --token \"813ee34d19a85b4a3a5db904b5659ddaf0e5648b3d2e58b8\")",
+      "Bash(openclaw gateway call --json chat.send --params '{\"\"sessionKey\"\":\"\"test\"\",\"\"message\"\":\"\"hello\"\",\"\"idempotencyKey\"\":\"\"test_123\"\"}' --token \"813ee34d19a85b4a3a5db904b5659ddaf0e5648b3d2e58b8\")",
+      "Bash(npx tsc -p tsconfig.main.json)",
+      "Bash(xargs grep -l \"client.*id\\\\|clientId\\\\|anyOf\")",
+      "Bash(xargs grep -l \"connect.*challenge\\\\|connect.challenge\")",
+      "Bash(node -e \":*)",
+      "Bash(powershell -Command \"Select-String -Path ''C:\\\\Users\\\\fboss\\\\AppData\\\\Roaming\\\\npm\\\\node_modules\\\\openclaw\\\\dist\\\\call-BfhGytph.js'' -Pattern ''invalid connect params'' -Context 10,2 | Select-Object -First 1\")",
+      "Bash(powershell -Command \":*)",
+      "Bash(npm run dist)",
+      "Bash(npm install --no-save png-to-ico)",
+      "Bash(node -e \"const m = require\\(''png-to-ico''\\); console.log\\(typeof m, Object.keys\\(m\\).slice\\(0,5\\)\\)\")",
+      "Bash(ls -lh /c/Users/fboss/OneDrive/Documents/coding/openClaw/release/*.exe)",
+      "Bash(gh auth status)",
+      "Bash(gh repo create openclaw-desktop --public --description \"Desktop client for OpenClaw — chat with your local OpenClaw gateway from a native Windows app\" --source=. --remote=origin --push)",
+      "Bash(npx tsc --noEmit)",
+      "Bash(gh pr:*)"
+    ]
+  }
+}
